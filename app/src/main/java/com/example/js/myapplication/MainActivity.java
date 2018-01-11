@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    Button button1;
 
     BluetoothAdapter mBluetoothAdapter; //블루투스 어댑터
     static final int REQUEST_ENABLE_BT = 10;  //블루투스 활성 상태 식별자
@@ -56,11 +55,17 @@ public class MainActivity extends AppCompatActivity {
         //mEditReceive = (EditText)findViewById(R.id.receiveString);
         mEditSend = (EditText)findViewById(R.id.sendString);
         mButtonSend = (Button)findViewById(R.id.button1);
+        mButtonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkBlueTooth();
+            }
+        });
 
     }
 
     //블루투스의 연결 상태를 점검하고 연결하는 메소드
-    void chkeckBlueTooth() {
+    void checkBlueTooth() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // 장치가 블루투스 지원하지 않는 경우

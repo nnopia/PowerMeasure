@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     int readBufferPosition;
     byte[] readBuffer;
 
+    TextView txt;
     EditText mEditReceive, mEditSend;
     Button mButtonSend;
 
@@ -53,8 +55,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //mEditReceive = (EditText)findViewById(R.id.receiveString);
+        txt = (TextView)findViewById(R.id.textView);
         mEditSend = (EditText)findViewById(R.id.sendString);
         mButtonSend = (Button)findViewById(R.id.button1);
+
+        mEditSend.setText("정상작동중");
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             // 장치가 블루투스 지원하지 않는 경우
-            finish();   // 어플리케이션 종료
+            Toast.makeText(getApplicationContext(), "블루투스를 지원하지 않는 기기", Toast.LENGTH_LONG).show();
+            finish();
         }
 
         //블루투스가 비활성화 되어 있을때 활성화
@@ -121,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void sedData(String msg){
+    void sendData(String msg){
         msg+= mStrDelimiter; //문자열 종료(\n)
         try{
             mOutputStream.write(msg.getBytes());//문자열 전송
@@ -184,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         //블루투스와 연결 하는 메소드
         BD = FindDevice(selectedDeviceName);
         //선택된 장치를  BD 객체에 저장
-        UUID uuid = java.util.UUID.randomUUID();
+        UUID uuid = java.util.UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
         //랜덤한 unique 키 생성 ;
         try {
             //블루투스와 스마트폰이 통신할수 있는 소켓을 생성 .
@@ -195,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             //데이터 송수신을 위한 스트림
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
-
+            mEditSend.setText("연결 성공");
             beginListenForData();
         }
         catch(Exception e){

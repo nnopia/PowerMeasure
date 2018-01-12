@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView txt;
     EditText mEditReceive, mEditSend;
-    Button mButtonSend;
+    Button mButtonSend, testButton;
 
 
 
@@ -58,12 +58,22 @@ public class MainActivity extends AppCompatActivity {
         txt = (TextView)findViewById(R.id.textView);
         mEditSend = (EditText)findViewById(R.id.sendString);
         mButtonSend = (Button)findViewById(R.id.button1);
+        testButton = (Button)findViewById(R.id.button2);
 
-        mEditSend.setText("정상작동중");
+        txt.setText("testing");
+
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendData(mEditSend.getText().toString());
+            }
+        });
+
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkBlueTooth();
+
             }
         });
 
@@ -128,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void sendData(String msg){
-        msg+= mStrDelimiter; //문자열 종료(\n)
+        //msg+= mStrDelimiter; //문자열 종료(\n)
         try{
             mOutputStream.write(msg.getBytes());//문자열 전송
         }
@@ -169,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                         //수신된 문자열 데이터 처리
                                         @Override
                                         public void run() {
-                                            mEditReceive.setText(mEditReceive.getText().toString()+data+mStrDelimiter);
+                                            txt.setText(data);
                                         }
                                     });
                                 }
@@ -201,8 +211,9 @@ public class MainActivity extends AppCompatActivity {
             //데이터 송수신을 위한 스트림
             mOutputStream = mSocket.getOutputStream();
             mInputStream = mSocket.getInputStream();
-            mEditSend.setText("연결 성공");
+            txt.setText("연결 성공");
             beginListenForData();
+            WorkerThread.start();
         }
         catch(Exception e){
             Toast.makeText(getApplicationContext(),
@@ -224,5 +235,18 @@ public class MainActivity extends AppCompatActivity {
         }
         return selectedDevice;
     }
+
+
+    @Override
+    protected void onDestroy() {
+        try{
+            WorkerThread.interrupt(); // 데이터 수신 쓰레드 종료
+            mInputStream.close();
+            mSocket.close();
+        }catch(Exception e){}
+        super.onDestroy();
+    }
+
+
 
 }

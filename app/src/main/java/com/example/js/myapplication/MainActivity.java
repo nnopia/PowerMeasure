@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_ENABLE_BT = 10;  //블루투스 활성 상태 식별자
     int mPairedDeviceCount = 0; //페어링 된 디바이스의 개수를 저장하는 변수
 
-
     Set<BluetoothDevice> pairedDevices; //연결할 블루투스 정보를 조회할 수 있는 클래스
     BluetoothDevice BD;
 
@@ -43,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
     int readBufferPosition;
     byte[] readBuffer;
 
-    TextView txt;
-    EditText mEditReceive, mEditSend;
+    TextView txt,valuetxt;
+    EditText mEditReceive;
     Button mButtonSend, testButton;
-
+    measureProcess analogValues;
 
 
     @Override
@@ -56,16 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
         //mEditReceive = (EditText)findViewById(R.id.receiveString);
         txt = (TextView)findViewById(R.id.textView);
-        mEditSend = (EditText)findViewById(R.id.sendString);
+
         mButtonSend = (Button)findViewById(R.id.button1);
         testButton = (Button)findViewById(R.id.button2);
-
+        valuetxt=(TextView)findViewById(R.id.textView2);
         txt.setText("testing");
+        analogValues = new measureProcess();
 
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendData(mEditSend.getText().toString());
+
             }
         });
 
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkBlueTooth();
-
             }
         });
 
@@ -179,8 +178,19 @@ public class MainActivity extends AppCompatActivity {
                                         //수신된 문자열 데이터 처리
                                         @Override
                                         public void run() {
-                                            txt.setText(data);
+                                            txt.setText("Receiving");
+                                            int idx = data.indexOf('\r');
+                                            String aVal= data.substring(0,idx);
+
+                                            analogValues.pushValue(aVal);
+                                            String s="측정 값\n";
+                                            for(int i=0; i < analogValues.getLastPosition();i++){
+                                                s= s+ analogValues.getValueAt(i)+'\n';
+                                            }
+                                            valuetxt.setText(s);
+
                                         }
+
                                     });
                                 }
                                 else{

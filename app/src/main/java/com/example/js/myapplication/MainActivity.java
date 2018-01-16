@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_ENABLE_BT = 10;  //블루투스 활성 상태 식별자
     int mPairedDeviceCount = 0; //페어링 된 디바이스의 개수를 저장하는 변수
 
-    Set<BluetoothDevice> pairedDevices; //연결할 블루투스 정보를 조회할 수 있는 클래스
+    Set<BluetoothDevice> pairedDevices; //연결할 블루투스 정보를 조회할 수 있는 클래스.
     BluetoothDevice BD;
 
     //페어링된 기기와 통신에 사용되는 변수
